@@ -13,7 +13,7 @@ void title(void)
 			for(j=0;j<16;j++)
 				lcd_write(T[i+j]);
 			lcd_cmd(0xC0);
-			lcd_str("<==>SCAN ID<==>");
+			lcd_str("==> SCAN-ID  <==");
 			delay_ms(180);
 		}
 	}
