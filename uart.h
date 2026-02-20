@@ -16,7 +16,6 @@ void UART1_Txchr(unsigned char TxD)
 {
 	while(!((U1LSR>>5)&1));
 	U1THR = TxD;
-	
 }
 
 unsigned char UART1_Rxchr(void)

@@ -9,7 +9,7 @@ void lcd_cmd(unsigned char);
 void lcd_write(unsigned char);
 
 void lcd_init(){
-	IODIR0 = D|RS|E;
+	IODIR0 |= D|RS|E;
 	lcd_cmd(0x01);
 	lcd_cmd(0x02);
 	lcd_cmd(0x0C);
