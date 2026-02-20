@@ -1,7 +1,7 @@
 #include "delay.h"
-#define D 0xff
-#define RS 1<<8
-#define E 1<<9
+#define D  0xff
+#define RS 1<<10
+#define E  1<<11
 
 void lcd_str(unsigned char*);
 void lcd_init(void);

@@ -7,11 +7,12 @@ void voterIDScan(void);
 
 int main()
 {
-	unsigned char T[] = "                MODERN VOTING MACHINE USING LPC2129 & RFID      ";
+	//unsigned char T[] = "                MODERN VOTING MACHINE USING LPC2129 & RFID      ";
 	lcd_init();
+	UART1_config();
 	while(1)              
 	{
-			projTopicScroll(T);
+			//projTopicScroll(T);
 			voterIDScan();
 	}
 }
@@ -34,10 +35,13 @@ void projTopicScroll(unsigned char *s)
 void voterIDScan()
 {
 	unsigned char i,TAG[13];
-	UART1_config();
 	for(i=0;i<13;i++)
 		TAG[i] = UART1_Rxchr();
 	TAG[i] = '\0';
-	UART1_Txstr(TAG);
+	//UART1_Txstr(TAG);
+	lcd_cmd(0x80);
+	lcd_str(TAG);
+	for(i=0;i<13;i++)
+		TAG[i] = 0;
 }
 

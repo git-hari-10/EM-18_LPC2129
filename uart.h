@@ -5,11 +5,11 @@ void UART1_Txstr(unsigned char *);
 
 void UART1_config()
 {
-	PINSEL0 = 0x50000;
-	U1LCR   = 0x83;
-	U1DLL   = 97;
-	U1DLM   = 0;
-	U1LCR   = 0x03;
+	PINSEL0 |= 0x00050000;
+	U1LCR    = 0x83;
+	U1DLL    = 97;
+	U1DLM    = 0;
+	U1LCR    = 0x03;
 }
 
 void UART1_Txchr(unsigned char TxD)
