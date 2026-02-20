@@ -19,29 +19,35 @@ int main()
 
 void projTopicScroll(unsigned char *s)
 {
-	unsigned char i,j;
-	for(i=0;s[i+15]!='\0';i++)
-	{
-		lcd_cmd(0x01);
-		lcd_cmd(0x80);
-		for(j=0;j<16;j++)
-			lcd_write(s[i+j]);
-		lcd_cmd(0xC0);
-		lcd_str("==> SCAN  ID <==");
-		delay_ms(180);
-	}
+	static unsigned char i=0;
+	unsigned char j;
+	
+	lcd_cmd(0x01);
+	lcd_cmd(0x80);
+	for(j=0;j<16;j++)
+		lcd_write(s[i+j]);
+	i++;
+	lcd_cmd(0xC0);
+	lcd_str("==> SCAN  ID <==");
+	delay_ms(150);
+	
+	if(s[i+15] == '\0') 
+		i=0;
 }
 
 void voterIDScan()
 {
-	unsigned char i,TAG[13];
-	for(i=0;i<13;i++)
-		TAG[i] = UART1_Rxchr();
-	TAG[i] = '\0';
-	//UART1_Txstr(TAG);
-	lcd_cmd(0x80);
-	lcd_str(TAG);
-	for(i=0;i<13;i++)
-		TAG[i] = 0;
+	static unsigned char TAG[15];
+	static unsigned char i=0;
+	
+	if(U1LSR&1)
+	{
+		TAG[i++] = U1RBR;
+		if(i==12)
+		{
+			TAG[i] = '\0';
+			lcd_cmd(0x80);
+			lcd_str(TAG);
+		}
 }
 
