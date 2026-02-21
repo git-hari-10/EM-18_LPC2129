@@ -2,39 +2,38 @@
 #include "lcd.h"
 #include "uart.h"
 #include "string.h"
-#define EINT0 1<<16
+#define LED 1<<16
 
 char TAG[15];
-char *RFID = "HARISH123450";
+char *RFID = "ABCDEFGHIJKL";
+unsigned char index = 0;
 unsigned char received = 0;
 
 /* _________ UART1_ISR __________ */
 
 void VOTER_ID_ISR(void) __irq    
 {
-	static unsigned char x = 0;
-	TAG[x++] = U1RBR;
-	if(x==12)
+	TAG[index++] = U1RBR;
+	if(index==12)
 	{
-		TAG[x] = '\0';
+		TAG[index] = '\0';
 		received = 1;
-		x=0;
+		index=0;
 	}
 	VICVectAddr = 0;
 }
 /* ______________________________ */
 
-void projTopicScroll(unsigned char *);
+void projTopic(void);
 
 int main()
 {
-	unsigned char T[] = "                MODERN VOTING MACHINE USING LPC2129 & RFID      ";
-	IODIR0 = EINT0;
+	IODIR0 |= LED;
 	lcd_init();
 	UART1_config();
 	
 	U1FCR = 0x07;
-	U1IER = 0x01; // ENABLE UART1_Rx INTERRUPT
+	U1IER = 0x01; 
 	
 	/*___ SLOT-0 -> UART1 ___*/ 
 	VICIntSelect  = 0;
@@ -43,36 +42,42 @@ int main()
 	VICIntEnable |= 1<<7;
 	/*  ________ x ________  */
 	
-	while(1)              
+	projTopic();
+
+	while(1) // MAIN CODE          
 	{	
-		projTopicScroll(T);
 		if(received)
 		{
 			received = 0;
+			IOSET0   = LED;
+			delay_ms(100);
+			IOCLR0   = LED;
 			if(!strcmp(TAG,RFID))
-				IOSET0   = EINT0;
+			{
+				lcd_cmd(0x01);
+				lcd_cmd(0xC0);lcd_str(" [ ACCESS GRANTED ] ");
+				lcd_cmd(0x94);lcd_str(">>>>");delay_ms(200);lcd_str(">>>>");delay_ms(200);lcd_str(">>>>");delay_ms(200);lcd_str(">>>>");
+			}
+			else
+			{
+				lcd_cmd(0x01);
+				lcd_cmd(0xC0);lcd_str("  ________________  ");
+				lcd_cmd(0x94);lcd_str(" |  INVALID CARD  | ");
+				delay_ms(500);
+			}
+			projTopic();
 		}
 	}
 }
 
-/* ________ PROJECT TITLE ________*/
+/* _______________ HOME SCREEN ______________*/
 
-void projTopicScroll(unsigned char *s)
+void projTopic()
 {
-	static unsigned char i=0;
-	unsigned char j;
-	
-	lcd_cmd(0x01);
-	lcd_cmd(0x80);
-	for(j=0;j<16;j++)
-		lcd_write(s[i+j]);
-	i++;
-	lcd_cmd(0xC0);
-	lcd_str("==> SCAN  ID <==");
-	delay_ms(150);
-	
-	if(s[i+15] == '\0') 
-		i=0;
+	lcd_cmd(0x80);lcd_str("### VOTE MACHINE ###");
+	lcd_cmd(0xC0);lcd_str("--------------------");
+	lcd_cmd(0x94);lcd_str(">> [ SCAN  CARD ] <<");
+	lcd_cmd(0xD4);lcd_str("      WAITING...    ");
 }
-/* ________________________________ */
+/* _________________________________________ */
 

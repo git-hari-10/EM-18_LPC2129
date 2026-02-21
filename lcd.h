@@ -10,10 +10,10 @@ void lcd_write(unsigned char);
 
 void lcd_init(){
 	IODIR0 |= D|RS|E;
-	lcd_cmd(0x01);
-	lcd_cmd(0x02);
-	lcd_cmd(0x0C);
 	lcd_cmd(0x38);
+	lcd_cmd(0x0C);
+	lcd_cmd(0x06);
+	lcd_cmd(0x01);
 }
 
 void lcd_cmd(unsigned char command){
@@ -21,7 +21,7 @@ void lcd_cmd(unsigned char command){
 	IOSET0 = command;
 	IOCLR0 = RS;
 	IOSET0 = E;
-	delay_ms(2);
+	delay_ms(5);
 	IOCLR0 = E;
 }
 
@@ -30,7 +30,7 @@ void lcd_write(unsigned char data){
 	IOSET0 = data;
 	IOSET0 = RS;
 	IOSET0 = E;
-	delay_ms(2);
+	delay_ms(5);
 	IOCLR0 = E;
 }
 
