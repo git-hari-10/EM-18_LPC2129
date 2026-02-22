@@ -21,7 +21,7 @@ void lcd_cmd(unsigned char command){
 	IOSET0 = command;
 	IOCLR0 = RS;
 	IOSET0 = E;
-	delay_ms(5);
+	delay_ms(2);
 	IOCLR0 = E;
 }
 
@@ -30,7 +30,7 @@ void lcd_write(unsigned char data){
 	IOSET0 = data;
 	IOSET0 = RS;
 	IOSET0 = E;
-	delay_ms(5);
+	delay_ms(2);
 	IOCLR0 = E;
 }
 
