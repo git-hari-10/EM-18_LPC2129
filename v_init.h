@@ -18,9 +18,6 @@ void votingInit()
 		{
 			dmk++;
 			delay_ms(150);
-			lcd_cmd(0x96);
-			lcd_write((dmk/10)+'0');
-			lcd_write((dmk%10)+'0');
 			while(DMK==0);
 			return;
 		}
@@ -28,9 +25,6 @@ void votingInit()
 		{
 			admk++;
 			delay_ms(150);
-			lcd_cmd(0x9D);
-			lcd_write((admk/10)+'0');
-			lcd_write((admk%10)+'0');
 			while(ADMK==0);
 			return;
 		}
@@ -38,9 +32,6 @@ void votingInit()
 		{
 			tvk++;
 			delay_ms(150);
-			lcd_cmd(0xA4);
-			lcd_write((tvk/10)+'0');
-			lcd_write((tvk%10)+'0');
 			while(TVK==0);
 			return;
 		}	
@@ -50,10 +41,10 @@ void votingInit()
 void display_init()
 {
 	lcd_cmd(0x01);
-	lcd_cmd(0x82);lcd_str("DMK ");lcd_cmd(0x86);lcd_write('|');
-	lcd_cmd(0x88);lcd_str("ADMK");lcd_cmd(0x8D);lcd_write('|');
-	lcd_cmd(0x8F);lcd_str("TVK ");
-	lcd_cmd(0xC0);lcd_str(" ------------------ ");
+	lcd_cmd(0x80);lcd_str(">> SELECT PARTIES <<");
+	lcd_cmd(0xC0);lcd_str("[1] DMK       ");
+	lcd_cmd(0x94);lcd_str("[2] ADMK      ");
+	lcd_cmd(0xD4);lcd_str("[3] TVK       ");
 }
 
 void result_calc()

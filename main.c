@@ -58,7 +58,7 @@ int main()
 		if(received)
 		{
 			received = 0;
-			UART1_Txstr(VOTERID);
+			//UART1_Txstr(VOTERID);
 			if(!strcmp(VOTERID,BASEID))
 			{
 				lcd_cmd(0x01);

@@ -11,7 +11,7 @@
 ### ADS-LD Output File: 'Modern_VOTER.axf'
 ### ADS-LD Command File: 'Modern_VOTER.lnp'
 ### Checking for dirty Components...
-### Creating CmdFile 'Modern_VOTER.lnp', Handle=0x00001024
+### Creating CmdFile 'Modern_VOTER.lnp', Handle=0x0000112C
 ### Writing '.lnp' file
 ### ADS-LD Command file 'Modern_VOTER.lnp' is ready.
 ### ADS-LD: About to start ADS-LD Thread.
