@@ -5,7 +5,12 @@
 #include "uart.h"
 #include "string.h"
 
-char *BASEID = "ABCDEFGHIJKL";  
+char BASEID[3][13] = {
+	"0600680EE989",
+	"05005351C6C1",
+	"060067F1C656"
+	};
+unsigned char voted[3] ={0,0,0};  
 unsigned char index = 0;
 unsigned char received = 0;
 char VOTERID[15];
@@ -29,6 +34,8 @@ void VOTER_ID_ISR(void) __irq
 int main()
 {
 	unsigned char i;
+	unsigned char valid = 0;
+	unsigned char found = 0;
 	UART1_config();
 	
 	U1FCR = 0x07;
@@ -46,43 +53,70 @@ int main()
 	homeScr();
 
 	while(1) // MAIN CODE          
-	{	
+	{
 		if(RES==0)
 		{
 			result_calc();
 			dmk = admk = tvk = 0;
 			while(RES==0); 
-        delay_ms(150);
+        	delay_ms(150);
 			homeScr();
-		}
+		}	
 		if(received)
 		{
 			received = 0;
-			//UART1_Txstr(VOTERID);
-			if(!strcmp(VOTERID,BASEID))
+			UART1_Txstr(VOTERID);
+			valid = 0;
+			found = 0;
+			for(i=0;i<3;i++)
 			{
-				lcd_cmd(0x01);
-				lcd_cmd(0xC0);lcd_str(" [ ACCESS GRANTED ] ");
-				lcd_cmd(0x94);
-				for(i=0;i<20;i++)
-				{
-					lcd_write('=');
-					delay_ms(150);
-				}
-				votingInit();
+			    if(!strcmp(VOTERID, BASEID[i]))
+			    {
+			        found = 1;
+			
+			        if(voted[i] == 0)
+			        {
+			            voted[i] = 1;
+			            valid = 1;
+			        }
+			        else
+			        {
+			            lcd_cmd(0x01);
+						lcd_cmd(0x80);lcd_str(" ------------------ ");
+			            lcd_cmd(0xC0);lcd_str("       ALREADY      ");
+						lcd_cmd(0x94);lcd_str("        VOTED       ");
+						lcd_cmd(0xD4);lcd_str(" ------------------ ");
+			            delay_sc(3);
+			        }
+			        break;
+			    }
 			}
-			else
+			
+			if(valid)
 			{
-				lcd_cmd(0x01);
-				lcd_cmd(0x80);lcd_str(" ------------------ ");
-				lcd_cmd(0xC0);lcd_str("       INVALID      ");
-				lcd_cmd(0x94);lcd_str("       VOTERID      ");
-				lcd_cmd(0xD4);lcd_str(" ------------------ ");
-				delay_sc(3);
+			    lcd_cmd(0x01);
+			    lcd_cmd(0xC0);lcd_str(" [ ACCESS GRANTED ] ");
+			    lcd_cmd(0x94);
+			
+			    for(i=0;i<20;i++)
+			    {
+			        lcd_write('=');
+			        delay_ms(150);
+			    }
+			
+			    votingInit();
+			}
+			else if(!found)
+			{
+			    lcd_cmd(0x01);
+			    lcd_cmd(0x80);lcd_str(" ------------------ ");
+			    lcd_cmd(0xC0);lcd_str("       INVALID      ");
+			    lcd_cmd(0x94);lcd_str("       VOTERID      ");
+			    lcd_cmd(0xD4);lcd_str(" ------------------ ");
+			    delay_sc(3);
 			}
 			homeScr();
 		}
 	}
 }
-
 
